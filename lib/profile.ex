@@ -1,7 +1,12 @@
 defmodule Profile do
     alias __MODULE__
   
-    @enforce_keys [:row, :col]
-    defstruct [:row, :col]
+    @derive [Poison.Encoder]
+    @enforce_keys [:name, :steps]
+    defstruct [:name, :steps]
+
+    def new(name, steps)  do
+      {:ok, %Profile{name: name, steps: steps}}
+    end
   
   end

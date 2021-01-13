@@ -1,8 +1,8 @@
 defmodule Step do
     alias __MODULE__
   
-    @enforce_keys [:duration, :name, :temperature]
-    defstruct [:duration, :name, :temperature]
+    @derive [Poison.Encoder]
+    defstruct duration: 0, name: "", temperature: 0
     
     def new(name, duration, temperature)  do
       {:ok, %Step{name: name, duration: duration, temperature: temperature}}
