@@ -16,8 +16,12 @@ defmodule Playground do
     :world
   end
 
-  def init(filename) do
-    Importer.import(filename)
+  @filename "test-profile.json"
+
+  def init() do
+    Importer.import(@filename)
+    |> Controller.new
+    |> elem(1)
   end
 
 end
