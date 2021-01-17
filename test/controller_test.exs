@@ -18,37 +18,34 @@ defmodule ControllerTest do
       profile = create_profile_with_steps(steps)
       %Controller{profile: profile, current_step_index: step_index}
     end
+
+    def test_index(controller_data, status, index) do
+      assert elem(controller_data, 1).current_step_index == index
+      assert elem(controller_data, 0) == status
+    end
   
     test "increments step index" do
-      controller_data = create_controller_with_steps(3, 1)
+      create_controller_with_steps(3, 1)
       |> Controller.next_step
-
-      assert elem(controller_data, 1).current_step_index == 2
-      assert elem(controller_data, 0) == :ok
+      |> (&(test_index(&1, :ok, 2))).()
     end
 
     test "does not increment step when at highest index" do
-      controller_data = create_controller_with_steps(3, 2)
+      create_controller_with_steps(3, 2)
       |> Controller.next_step
-
-      assert elem(controller_data, 1).current_step_index == 2
-      assert elem(controller_data, 0) == :max_index
+      |> (&(test_index(&1, :max_index, 2))).()
     end
 
     test "decrements step index" do
-      controller_data = create_controller_with_steps(3, 1)
+      create_controller_with_steps(3, 1)
       |> Controller.previous_step
-
-      assert elem(controller_data, 1).current_step_index == 0
-      assert elem(controller_data, 0) == :ok
+      |> (&(test_index(&1, :ok, 0))).()
     end
 
     test "does not decrement step index for first step" do
       controller_data = create_controller_with_steps(3, 0)
       |> Controller.previous_step
-
-      assert elem(controller_data, 1).current_step_index == 0
-      assert elem(controller_data, 0) == :min_index
+      |> (&(test_index(&1, :min_index, 0))).()
     end
   end
   
