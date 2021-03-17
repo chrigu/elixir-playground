@@ -1,52 +1,23 @@
-defmodule Sensor.FakeSensorServer do
+defmodule Sensor.FakeSensor do
 
-    @name :sensor_server
-    @refresh_interval :timer.seconds(10) #:timer.minutes(5)
-  
-    use GenServer
+    # use struct to check type
 
-    defmodule State do
-        defstruct temperature: 25, heating: true
-      end
-  
-    # Client Interface
-  
-    def start do
-      GenServer.start(__MODULE__, %State{}, name: @name)
+    def init() do
+        %{name: "FakeSensor", temperature: 25}
     end
-  
-    def get_sensor_data do
-      GenServer.call @name, :get_sensor_data
+
+    def get_reading(state) do
+        calculate_new_data(state)
     end
-  
-    # Server Callbacks
-  
-    def init(state) do
-      schedule_refresh()
-      {:ok, state}
+
+    def stop do
+
     end
-  
-    def handle_info(message, state) do
-        IO.puts "Can't touch this! #{inspect message}"
-        {:noreply, state}
-    end
-  
-    defp schedule_refresh do
-      Process.send_after(self(), :refresh, @refresh_interval)    
-    end
-  
-    def handle_call(:get_sensor_data, _from, state) do
-        IO.inspect state
-        new_state = calculate_new_data(state)
-        schedule_refresh()
-        {:noreply, new_state}
-    end
-  
-    defp calculate_new_data(%State{heating: true} = state) do
-    cond do
-        state.temperature <= 30 -> %{state | temperature: state.temperature + 0.5}
-        true -> %{state | heating: false}
+
+    defp calculate_new_data(state) do
+        cond do
+            state.temperature <= 30 -> %{state | temperature: state.temperature + 0.5}
+            state.temperature > 30 -> %{state | temperature: state.temperature - 0.5}
         end
     end
-  end
-  
+end
